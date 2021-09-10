@@ -1,0 +1,3 @@
+# https://unix.stackexchange.com/a/230111/90681
+# Run a script on any USB storage device
+ACTION=="add", KERNEL=="sd?", SUBSYSTEM=="block", ENV{ID_BUS}=="usb", RUN+="/usr/local/bin/navipi_usb_loader.sh"
