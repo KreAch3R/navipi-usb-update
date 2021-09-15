@@ -14,6 +14,7 @@ Update your car PRI solution (mine is named "NaviPi", hence the name) automagica
 
 ```
 sudo apt install at
+sudo apt install at-spi2-core
 ```
 
 # Installation
@@ -52,15 +53,15 @@ etc.
 # NaviPi update script by KreAch3R
 
 function general_update {
-    sudo apt update
-    sudo apt upgrade -y
-    sudo apt dist-upgrade -y
+    sudo apt-get update
+    sudo apt-get upgrade -y
+    sudo apt-get dist-upgrade -y
 }
 
 function deps_update {
     echo "Installing required software."
     # Include here all the necessary dependencies
-    sudo apt install libgeos-dev
+    sudo apt-get install libgeos-dev
     pip3 install astral
     pip3 install tzwhere
 }
