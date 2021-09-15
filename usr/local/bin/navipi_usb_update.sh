@@ -15,6 +15,7 @@ reset=`tput sgr0`
 UPDATETRIGGER="navipi.update"
 USBPATH="/home/pi" #default
 SCRIPT=$(realpath "$0")
+# If you change this, you need to change it in /usr/local/bin/navipi_usb_loader.sh as well
 LOGFILE="/home/pi/Logs/navipi_update.log"
 
 # Overloading function

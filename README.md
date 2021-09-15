@@ -8,7 +8,7 @@ Update your car PRI solution (mine is named "NaviPi", hence the name) automagica
 * The scripts need to be manually installed the first time.
 * Any USB storage media with any file system capable of holding zip files. Yes, that includes FAT32. Due to the zip mechanism, unix permissions are kept intact!
 * A file named `navipi.update` in the root of the USB storage.
-* Script output is saved in `~/Logs/navipi_update.log` (hardcoded, in `navipi_usb_loader.sh`). Change it at your heart's desire.
+* Script output is saved in `~/Logs/navipi_update.log` (Script variable, in both `navipi_usb_loader.sh` and `navipi_usb_update.sh`). Change it at your heart's desire.
 
 # Dependencies
 
