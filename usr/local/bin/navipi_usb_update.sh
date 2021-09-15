@@ -51,7 +51,7 @@ function zip_extract {
         zenity --error --text="${NO_ZIPS_ERROR}" --width=300 --height=100
         exit 1
     else
-        for ZIP in "${ZIPS}"; do
+        for ZIP in ${ZIPS}; do
             FILE="${ZIP##*/}"
             FILENAME="${FILE%.zip}"
             echo "Found: ${yellow}${FILE}${reset}"
