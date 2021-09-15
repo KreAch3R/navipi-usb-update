@@ -21,6 +21,12 @@ LOGFILE="/home/pi/Logs/navipi_update.log"
 # Overloading function
 function general_update { :; }
 
+# Overloading function
+function deps_update { :; }
+
+# Overloading function
+function services_update { :; }
+
 # Runs on background only, before any UI
 function locate_usb {
     echo "Locating \"UPDATE\" USB storage media..."
@@ -40,50 +46,20 @@ function locate_usb {
     fi
 }
 
-# Needs USBPATH as $1!
-function zip_extract {
-    USBPATH="$1"
-    echo "Starting ZIP extraction..."
-    # maxdepth is needed so find can't look too deep into USBPATH, only one directory down
-    ZIPS=$(find "${USBPATH}"/* -maxdepth 0 -type f -name "*.zip")
-    if [[ -z ${ZIPS} ]] ; then
-        NO_ZIPS_ERROR="No Zip files found in the USB media. Please retry."
-        zenity --error --text="${NO_ZIPS_ERROR}" --width=300 --height=100
-        exit 1
-    else
-        for ZIP in ${ZIPS}; do
-            FILE="${ZIP##*/}"
-            FILENAME="${FILE%.zip}"
-            echo "Found: ${yellow}${FILE}${reset}"
-
-            echo "Copying to /tmp..."
-            sudo cp "${ZIP}" /tmp/
-            sudo unzip -o /tmp/"${FILE}" -d /tmp/
-            if [ -f "/tmp/${FILENAME}/${FILENAME}.sh" ]; then
-                echo "${green}Found: "${FILENAME}".sh, including it...${reset}"
-                . /tmp/"${FILENAME}"/"${FILENAME}".sh
-                if [ $? -ne 0 ]; then
-                    SCRIPT_LOADING_ERROR="Script loading failed, probably a badly formatted file. Please check the log and fix the script!"
-                    zenity --error --text="${SCRIPT_LOADING_ERROR}" --width=300 --height=100
-                    exit 1
-                fi
-            else
-                echo "${yellow}No update.sh found, copy-only mode engaged${reset}"
-            fi
-        done
-    fi
-}
-
-# Overloading function
-function deps_update { :; }
-
 # Installs files from /tmp/* to specified directories
 function install_files {
-    for FILEPATH in $(cd "/tmp/${FILENAME}" && find * -mindepth 2 -type f); do
-        SOURCE_FILEPATH="/tmp/${FILENAME}/${FILEPATH}"
-        DESTINATION_PATH="/${FILEPATH%/*}"
-        install_system "${SOURCE_FILEPATH}" "${DESTINATION_PATH}"
-    done
+    if [ -d "/tmp/${FILENAME}" ]; then
+        for FILEPATH in $(cd "/tmp/${FILENAME}" && find * -mindepth 2 -type f); do
+            SOURCE_FILEPATH="/tmp/${FILENAME}/${FILEPATH}"
+            DESTINATION_PATH="/${FILEPATH%/*}"
+            install_system "${SOURCE_FILEPATH}" "${DESTINATION_PATH}"
+        done
+    else
+        MISSING_DIR_ERROR="No directory /tmp/${FILENAME} found, probably a badly formatted zip file, please check the log and retry!"
+        echo "${MISSING_DIR_ERROR}"
+        zenity --error --text="${MISSING_DIR_ERROR}" --width=300 --height=100
+        abort
+    fi
 }
 
 # Internal function of install_files
@@ -113,7 +89,48 @@ function install_system {
 }
 
 # Overloading function
-function services_update { :; }
+function do_install {
+    install_files
+    general_update
+    deps_update
+    services_update
+}
+
+# Needs USBPATH as $1!
+function extract_install {
+    USBPATH="$1"
+    echo "Starting ZIP extraction..."
+    # maxdepth is needed so find can't look too deep into USBPATH, only one directory down
+    ZIPS=$(find "${USBPATH}"/* -maxdepth 0 -type f -name "*.zip")
+    if [[ -z ${ZIPS} ]] ; then
+        NO_ZIPS_ERROR="No Zip files found in the USB media. Please retry."
+        zenity --error --text="${NO_ZIPS_ERROR}" --width=300 --height=100
+        abort
+    else
+        for ZIP in ${ZIPS}; do
+            FILE="${ZIP##*/}"
+            FILENAME="${FILE%.zip}"
+            echo "Found: ${yellow}${FILE}${reset}"
+
+            echo "Copying to /tmp..."
+            sudo cp "${ZIP}" /tmp/
+            sudo unzip -o /tmp/"${FILE}" -d /tmp/
+            if [ -f "/tmp/${FILENAME}/${FILENAME}.sh" ]; then
+                echo "${green}Found: "${FILENAME}".sh, including it...${reset}"
+                . /tmp/"${FILENAME}"/"${FILENAME}".sh
+                if [ $? -ne 0 ]; then
+                    SCRIPT_LOADING_ERROR="Script loading failed, probably a badly formatted file. Please check the log and fix the script!"
+                    zenity --error --text="${SCRIPT_LOADING_ERROR}" --width=300 --height=100
+                    abort
+                fi
+            else
+                echo "${yellow}No update.sh found, copy-only mode engaged${reset}"
+            fi
+            # Install everything
+            do_install
+        done
+    fi
+}
 
 # LOGFILE cleanup from color output
 function clean_log {
@@ -129,15 +146,7 @@ function terminal {
     echo "Killing OpenAuto Pro application."
     pkill autoapp
 
-    zip_extract "${USBPATH}"
-
-    general_update
-
-    deps_update
-
-    install_files
-
-    services_update
+    extract_install "${USBPATH}"
 
     echo "${green}Update finished.${reset}"
 
@@ -147,6 +156,12 @@ function terminal {
     if [ $? = 0 ]; then
         sudo reboot
     fi
+}
+
+function abort {
+    echo "Update aborted."
+    clean_log
+    exit 1
 }
 
 ####################################################
@@ -175,7 +190,7 @@ if [ $? = 0 ]; then
         # https://stackoverflow.com/a/23002964/4008886
         x-terminal-emulator -e bash -c "${SCRIPT} \"terminal\" \"${USBPATH}\" 2>&1 | tee -a ${LOGFILE}"
     else
-        echo "Update aborted."
+        abort
     fi
 else
     echo "No "${UPDATETRIGGER}" found. Aborting."
