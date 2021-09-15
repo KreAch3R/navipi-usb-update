@@ -173,7 +173,7 @@ if [ $? = 0 ]; then
         # Run a bash function in a separate terminal window
         # Used my method of running specific functions as script arguments and combined it with
         # https://stackoverflow.com/a/23002964/4008886
-        x-terminal-emulator -e bash -c "${SCRIPT} \"terminal\" \"${USBPATH}\" | tee -a ${LOGFILE}"
+        x-terminal-emulator -e bash -c "${SCRIPT} \"terminal\" \"${USBPATH}\" 2>&1 | tee -a ${LOGFILE}"
     else
         echo "Update aborted."
     fi
