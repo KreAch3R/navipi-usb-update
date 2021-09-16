@@ -82,4 +82,8 @@ zip -r installation_folder.zip installation_folder/
 
 4. Place the zip inside the USB storage, then create a file `navipi.update` (again, hardcoded, rename it inside `navipi_usb_update.sh`) in the root folder of the USB.
 
-5. Insert the USB and check the magic in `~/Logs/navipi_update.log`.
+5. Insert the USB and check the magic!
+
+[![NaviPi Pluggable USB update (RPI)](https://yt-embed.herokuapp.com/embed?v=uOoGoRgWOGo)](https://www.youtube.com/watch?v=uOoGoRgWOGo "NaviPi Pluggable USB update (RPI)")
+
+
