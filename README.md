@@ -28,18 +28,19 @@ sudo apt install at-spi2-core
 
 1. Create a root folder somewhere and inside it create the subdirectories of the installation relative to the / (root) folder of your RPI. E.g.
 ```
-~/Downloads/ --> test/
+~/Downloads/ --> test_update/
                ----> usr/local/bin
                ----> etc/systemd/system
                ----> home/pi
+               ----> test_update.sh
 ```
 
 etc.
 
-2. Specific instructions: Please study the format of the `navipi_usb_update.sh` script. There are functions that can be overloaded by a zip-included script named exactly the same as the zip.
+2. Specific instructions: Please study the format of the `navipi_usb_update.sh` script. There are functions that can be overloaded by a zip-included script named exactly the same as the zip and the root folder.
 
    Example: If your zip is named `daynightlocation_update.zip`, you need to place a `daynightlocation_update.sh` file inside the root of the zip.      
-**Caution**: the zip needs to have a root folder as well (check the screenshot below):
+**Caution**: the zip needs to have a root folder with the same name as well (check the screenshot below):
 <img src="screenshots/dir-structure.png?raw=true">
 
   **Overloading functions** (and examples):
@@ -75,7 +76,7 @@ function services_update {
 
 3. Zip up the root folder with the command:
 ```
-zip -r installation_folder.zip installation_folder/
+zip -r test_update.zip test_update/
 ```
 
 (Again, check screenshot for the correct structure.)
