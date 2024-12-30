@@ -2,6 +2,9 @@
 
 Update your car PRI solution (mine is named "NaviPi", hence the name) automagically just by plugging in any USB stick with the installation files zipped up in the same directory structure as the original installation. Specific installation commands can be run as well in different points of the install.
 
+<a href="https://www.paypal.com/donate/?business=R9V8AAFPNV684&no_recurring=0&currency_code=EUR">
+<img src="https://raw.githubusercontent.com/stefan-niedermann/paypal-donate-button/master/paypal-donate-button.png" alt="Donate with PayPal" width="300">
+</a>
 
 # Requirements
 * root/sudo
@@ -85,6 +88,6 @@ zip -r test_update.zip test_update/
 
 5. Insert the USB and check the magic!
 
-[![NaviPi Pluggable USB update (RPI)](https://yt-embed.herokuapp.com/embed?v=uOoGoRgWOGo)](https://www.youtube.com/watch?v=uOoGoRgWOGo "NaviPi Pluggable USB update (RPI)")
+[![NaviPi Pluggable USB update (RPI)](http://i.ytimg.com/vi/uOoGoRgWOGo/hqdefault.jpg)](https://www.youtube.com/watch?v=uOoGoRgWOGo "NaviPi Pluggable USB update (RPI)")
 
 
